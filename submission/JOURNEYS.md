@@ -1,6 +1,8 @@
 # Atlas Marketplace — User Journeys and Decision Points
 
-**Deliverable 2 of the brief.** Standalone companion to the prototype.
+**Deliverable 2 of the brief.** Standalone written companion to the prototype.
+
+**Presentation version:** [journeys-deck.pdf](journeys-deck.pdf) (11 slides) or [journeys-deck.html](journeys-deck.html) to present from a browser. The deck follows the structure of this document, slide by slide.
 
 > **This file is the source of truth for the journeys.** If you build a deck, a diagram or a visual from it, reuse the labels here **exactly** — the stage names, the decision questions and the exception outcomes. An invented synonym for a stage is how two deliverables end up contradicting each other, and inconsistency reads worse than either one alone.
 

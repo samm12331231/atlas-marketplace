@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Atlas Marketplace — User Journeys</title>
+<style>
+  :root {
+    --navy-950: #071b2e;
+    --navy-900: #0b263f;
+    --navy-800: #133650;
+    --navy-700: #1c4d68;
+    --ink: #142536;
+    --muted: #647483;
+    --soft: #8c9aa6;
+    --line: #dce3e8;
+    --line-dark: #c9d2d9;
+    --canvas: #f4f6f7;
+    --green: #2b705b;
+    --green-soft: #e9f3ef;
+    --green-pale: #f4f8f6;
+    --amber: #956c28;
+    --amber-soft: #f8f1e5;
+    --blue-soft: #eaf1f5;
+    --stop: #a33f3f;
+    --stop-soft: #fbeeee;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #202a33; font-family: "Inter", "Avenir Next", "Segoe UI", -apple-system, sans-serif; color: var(--ink); }
+
+  .stage { position: fixed; inset: 0; display: grid; place-items: center; }
+  .slide {
+    width: 1280px; height: 720px; background: #fff; position: relative;
+    overflow: hidden; display: none; flex-direction: column;
+    transform-origin: center center;
+  }
+  .slide.active { display: flex; }
+
+  .body { flex: 1; padding: 44px 56px 0; display: flex; flex-direction: column; min-height: 0; }
+  .body.bleed { padding: 30px 36px 0; }
+
+  h1 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: 42px; line-height: 1.12; letter-spacing: -0.01em; }
+  h2 { font-family: Georgia, serif; font-weight: 400; font-size: 27px; line-height: 1.2; }
+  h3 { font-size: 13px; font-weight: 700; }
+  p { font-size: 14px; line-height: 1.6; color: var(--muted); }
+  .lead { font-size: 15px; line-height: 1.6; color: var(--muted); max-width: 900px; }
+  strong { color: var(--ink); }
+
+  .eyebrow { font-size: 10px; letter-spacing: 0.16em; font-weight: 700; color: var(--green); text-transform: uppercase; margin-bottom: 10px; }
+  .eyebrow.on-dark { color: #7fb8a3; }
+
+  .footer {
+    flex: none; height: 46px; padding: 0 56px; display: flex; align-items: center;
+    justify-content: space-between; border-top: 1px solid var(--line);
+    font-size: 10px; color: var(--soft); letter-spacing: 0.05em;
+  }
+  .footer b { color: var(--muted); font-weight: 600; }
+
+  /* ---- title slide ---- */
+  .cover { background: var(--navy-950); color: #fff; justify-content: center; padding: 0 76px; }
+  .cover .rule { width: 54px; height: 3px; background: var(--green); margin: 26px 0; }
+  .cover h1 { font-size: 54px; color: #fff; }
+  .cover p { color: #a9bccb; font-size: 16px; max-width: 700px; }
+  .cover .meta { margin-top: 44px; display: flex; gap: 44px; }
+  .cover .meta div { display: flex; flex-direction: column; gap: 5px; }
+  .cover .meta span { font-size: 9px; letter-spacing: 0.16em; color: #6f8799; font-weight: 700; }
+  .cover .meta strong { font-size: 13px; color: #e3ecf2; font-weight: 500; }
+  .cover .mark { position: absolute; right: 76px; top: 76px; width: 46px; height: 46px; border: 1px solid #4a6478; transform: rotate(45deg); display: grid; place-items: center; }
+  .cover .mark span { transform: rotate(-45deg); font-family: Georgia, serif; font-size: 24px; color: #fff; }
+
+  /* ---- six stages ---- */
+  .stages { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 26px; }
+  .stage-card { border: 1px solid var(--line-dark); border-radius: 8px; padding: 16px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .stage-card .num { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; color: var(--green); }
+  .stage-card strong { font-size: 13px; letter-spacing: 0.02em; }
+  .stage-card p { font-size: 11px; line-height: 1.5; }
+  .callout { margin-top: auto; border-left: 3px solid var(--green); background: var(--green-pale); padding: 16px 20px; border-radius: 0 8px 8px 0; margin-bottom: 34px; }
+  .callout strong { display: block; font-size: 12px; margin-bottom: 5px; }
+  .callout p { font-size: 12px; }
+
+  /* ---- journey map ---- */
+  .map { display: grid; grid-template-columns: 84px repeat(6, 1fr); border: 1px solid var(--line-dark); border-radius: 9px; overflow: hidden; }
+  .map .corner, .map .col { background: #f8f9f9; border-bottom: 1px solid var(--line); height: 42px; display: flex; align-items: center; font-size: 8.5px; letter-spacing: 0.1em; font-weight: 700; color: var(--soft); }
+  .map .col { flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; padding-left: 11px; border-right: 1px solid var(--line); }
+  .map .col span { color: var(--green); font-size: 7.5px; }
+  .map .row { grid-column: 1 / -1; display: grid; grid-template-columns: 84px repeat(6, 1fr); border-bottom: 1px solid var(--line); min-height: 132px; }
+  .map .row:last-child { border-bottom: 0; }
+  .map .lane { display: grid; place-items: center; background: #f8f9f9; border-right: 1px solid var(--line); }
+  .map .lane span { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 8.5px; letter-spacing: 0.16em; font-weight: 800; }
+  .lane-seller span { color: var(--navy-700); }
+  .lane-buyer span { color: var(--green); }
+  .lane-atlas span { color: var(--amber); }
+  .map .cell { border-right: 1px solid var(--line); padding: 13px 11px; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+  .map .cell:last-child { border-right: 0; }
+  .node { border: 1px solid var(--line-dark); border-radius: 6px; padding: 7px 9px; }
+  .node strong { display: block; font-size: 10px; line-height: 1.25; }
+  .node small { display: block; font-size: 8.5px; color: var(--soft); margin-top: 3px; line-height: 1.35; }
+  .node.dark { background: var(--navy-900); border-color: var(--navy-900); }
+  .node.dark strong { color: #fff; }
+  .node.dark small { color: #93a8b8; }
+  .dec { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
+  .diamond { width: 62px; height: 62px; border: 1px solid #b9c6ce; background: var(--blue-soft); transform: rotate(45deg); display: grid; place-items: center; margin: 6px 0 10px 6px; }
+  .diamond div { transform: rotate(-45deg); text-align: center; }
+  .diamond strong { display: block; font-size: 8.5px; line-height: 1.2; }
+  .diamond small { display: block; font-size: 7.5px; color: var(--green); font-weight: 700; }
+  .no-outcome { font-size: 8px; font-weight: 700; letter-spacing: 0.05em; color: var(--stop); background: var(--stop-soft); border: 1px solid #eccfcf; border-radius: 4px; padding: 3px 6px; }
+  .legend { display: flex; gap: 22px; margin-top: 16px; font-size: 10px; color: var(--muted); }
+  .legend span { display: flex; align-items: center; gap: 7px; }
+  .legend i { display: block; }
+  .lg-node { width: 11px; height: 11px; border: 1px solid var(--line-dark); border-radius: 3px; }
+  .lg-dec { width: 9px; height: 9px; background: var(--blue-soft); border: 1px solid #b9c6ce; transform: rotate(45deg); }
+  .lg-no { width: 11px; height: 11px; background: var(--stop-soft); border: 1px solid #eccfcf; border-radius: 3px; }
+
+  /* ---- journey steps ---- */
+  .steps { display: flex; flex-direction: column; gap: 0; margin-top: 24px; }
+  .step { display: grid; grid-template-columns: 34px 1fr; gap: 16px; padding: 13px 0; border-top: 1px solid var(--line); }
+  .step:first-child { border-top: 0; }
+  .step .idx { width: 26px; height: 26px; border-radius: 50%; background: var(--navy-900); color: #fff; display: grid; place-items: center; font-size: 10px; font-weight: 700; }
+  .step.is-decision .idx { background: var(--green); }
+  .step strong { font-size: 13.5px; }
+  .step p { font-size: 12px; margin-top: 3px; }
+  .step .if-no { display: inline-block; margin-top: 6px; font-size: 10px; font-weight: 700; color: var(--stop); background: var(--stop-soft); border: 1px solid #eccfcf; border-radius: 4px; padding: 3px 7px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+
+  /* ---- tables ---- */
+  table { width: 100%; border-collapse: collapse; margin-top: 22px; }
+  th { text-align: left; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--soft); border-bottom: 1px solid var(--line-dark); padding: 0 12px 9px 0; }
+  td { font-size: 12px; padding: 12px 12px 12px 0; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.45; }
+  td:first-child { font-weight: 650; }
+  .pill { display: inline-block; font-size: 9.5px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: var(--green-soft); color: var(--green); }
+  .pill.stop { background: var(--stop-soft); color: var(--stop); }
+  .pill.amber { background: var(--amber-soft); color: var(--amber); }
+
+  /* ---- exception cards ---- */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 22px; }
+  .card { border: 1px solid var(--line-dark); border-radius: 9px; padding: 17px 19px; display: flex; flex-direction: column; gap: 7px; }
+  .card .tag { font-size: 9.5px; font-weight: 800; letter-spacing: 0.06em; color: var(--stop); background: var(--stop-soft); border: 1px solid #eccfcf; border-radius: 4px; padding: 3px 7px; align-self: flex-start; }
+  .card strong { font-size: 12.5px; }
+  .card p { font-size: 11px; line-height: 1.5; }
+
+  /* ---- states / timeline ---- */
+  .flowline { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 22px; }
+  .chip { border: 1px solid var(--line-dark); border-radius: 6px; padding: 8px 11px; font-size: 10.5px; display: flex; align-items: center; gap: 7px; }
+  .chip b { font-size: 8.5px; color: var(--soft); font-weight: 700; }
+  .chip.ok { background: var(--green-pale); border-color: #cce2d8; }
+  .chip.stop { background: var(--stop-soft); border-color: #eccfcf; }
+
+  .tl { margin-top: 24px; border: 1px solid var(--line-dark); border-radius: 9px; overflow: hidden; }
+  .tl-head, .tl-row { display: grid; grid-template-columns: 96px 1fr 1fr 1fr; }
+  .tl-head { background: #f8f9f9; border-bottom: 1px solid var(--line); }
+  .tl-head div { padding: 11px 15px; font-size: 8.5px; letter-spacing: 0.11em; font-weight: 700; color: var(--soft); }
+  .tl-row { border-bottom: 1px solid var(--line); }
+  .tl-row:last-child { border-bottom: 0; }
+  .tl-row div { padding: 14px 15px; font-size: 11.5px; line-height: 1.45; border-right: 1px solid var(--line); }
+  .tl-row div:last-child { border-right: 0; }
+  .tl-row .day { font-weight: 700; color: var(--green); font-size: 12px; }
+
+  /* ---- closing ---- */
+  .closing { background: var(--navy-950); color: #fff; }
+  .closing h1 { color: #fff; }
+  .closing p { color: #a9bccb; }
+  .url { display: inline-block; margin-top: 12px; font-size: 15px; color: #8fd0b6; border-bottom: 1px solid #35604e; padding-bottom: 3px; }
+  .click-list { margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 40px; }
+  .click-list div { display: flex; gap: 11px; font-size: 12.5px; color: #c6d5df; align-items: flex-start; line-height: 1.5; }
+  .click-list b { color: #8fd0b6; font-weight: 700; flex: none; }
+
+  /* ---- screen chrome ---- */
+  .hud { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; background: rgba(7,27,46,0.92); border: 1px solid #29435a; border-radius: 999px; padding: 8px 16px; color: #a9bccb; font-size: 12px; z-index: 10; }
+  .hud button { background: none; border: 1px solid #35607f; color: #cfe0e8; border-radius: 6px; padding: 4px 10px; font: inherit; font-size: 11px; cursor: pointer; }
+  .hud button:hover { background: #133650; }
+
+  @media print {
+    html, body { background: #fff; }
+    .stage { position: static; display: block; }
+    .hud { display: none !important; }
+    .slide { display: flex !important; transform: none !important; page-break-after: always; break-after: page; }
+    .slide:last-child { page-break-after: auto; break-after: auto; }
+  }
+  @page { size: 1280px 720px; margin: 0; }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- 1 -->
+  <section class="slide cover active">
+    <div class="mark"><span>A</span></div>
+    <div class="eyebrow on-dark">Deliverable 2 &nbsp;·&nbsp; User journeys</div>
+    <h1>Atlas Marketplace</h1>
+    <div class="rule"></div>
+    <p>Buyer and seller flows for a secondary market in LP interests in private equity funds — from discovery to a completed transfer, with the decision points and the paths where a deal legitimately ends without closing.</p>
+    <div class="meta">
+      <div><span>CANDIDATE</span><strong>Samyukth Kalathil</strong></div>
+      <div><span>ROLE</span><strong>Intern, Technology · Greenstone</strong></div>
+      <div><span>SUBMITTED</span><strong>1 October 2026</strong></div>
+      <div><span>PROTOTYPE</span><strong>13 screens · two workspaces</strong></div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="slide">
+    <div class="body">
+      <div class="eyebrow">The spine</div>
+      <h2>Six stages, and why one of them is separate</h2>
+      <p class="lead" style="margin-top:10px">Each stage answers one question. The stage that matters most is <strong>ASK</strong> — in a private deal, price is not set at the bidding stage. It is set by what a buyer learns about a stale NAV while questioning the seller.</p>
+      <div class="stages">
+        <div class="stage-card"><div class="num">01</div><strong>DISCOVER</strong><p>Does a tradeable position exist, and who might want it?</p></div>
+        <div class="stage-card"><div class="num">02</div><strong>QUALIFY</strong><p>Is this counterparty allowed to see the deal at all?</p></div>
+        <div class="stage-card"><div class="num">03</div><strong>DILIGENCE</strong><p>What is actually being bought?</p></div>
+        <div class="stage-card"><div class="num">04</div><strong>ASK</strong><p>What is still unknown — and who else needs to know it?</p></div>
+        <div class="stage-card"><div class="num">05</div><strong>COMPETE</strong><p>What is it worth, and on what terms?</p></div>
+        <div class="stage-card"><div class="num">06</div><strong>CLOSE</strong><p>Can it actually complete?</p></div>
+      </div>
+      <div class="callout">
+        <strong>Why ASK is a stage and not a feature</strong>
+        <p>Folding questions into diligence hides the step where value is really established — and hides the fairness rule that every answer goes to every qualified buyer at once. If one bidder learns something material in a private email, the process becomes indefensible.</p>
+      </div>
+    </div>
+    <div class="footer"><span>Atlas Marketplace &nbsp;·&nbsp; User journeys</span><b>2</b></div>
+  </section>
+
+  <!-- 3 -->
+  <section class="slide">
+    <div class="body bleed">
+      <div class="eyebrow">The map</div>
+      <h2 style="margin-bottom:14px">Three lanes, six stages</h2>
+      <div class="map">
+        <div class="corner" style="padding-left:13px">PARTICIPANT</div>
+        <div class="col"><span>01</span>DISCOVER</div>
+        <div class="col"><span>02</span>QUALIFY</div>
+        <div class="col"><span>03</span>DILIGENCE</div>
+        <div class="col"><span>04</span>ASK</div>
+        <div class="col"><span>05</span>COMPETE</div>
+        <div class="col" style="border-right:0"><span>06</span>CLOSE</div>
+
+        <div class="row">
+          <div class="lane lane-seller"><span>SELLER</span></div>
+          <div class="cell"><div class="node"><strong>Create opportunity</strong><small>Position details</small></div></div>
+          <div class="cell"><div class="dec"><div class="diamond"><div><strong>Transferable?</strong><small>YES →</small></div></div><span class="no-outcome">NO · STOP</span></div></div>
+          <div class="cell"><div class="node"><strong>Approve teaser</strong><small>Identity protected</small></div></div>
+          <div class="cell"><div class="node"><strong>Answer Q&amp;A</strong><small>Respond once, logged</small></div></div>
+          <div class="cell"><div class="node"><strong>Review final bids</strong><small>Shortlist &amp; select</small></div></div>
+          <div class="cell"><div class="node dark"><strong>Sign &amp; settle</strong><small>Receive proceeds</small></div></div>
+        </div>
+
+        <div class="row">
+          <div class="lane lane-buyer"><span>BUYER</span></div>
+          <div class="cell"><div class="node"><strong>Discover</strong><small>Matched opportunity</small></div></div>
+          <div class="cell"><div class="dec"><div class="diamond"><div><strong>Qualified?</strong><small>YES →</small></div></div><span class="no-outcome">NO · DENY</span><div class="diamond"><div><strong>NDA signed?</strong><small>YES →</small></div></div><span class="no-outcome">NO · NO ACCESS</span></div></div>
+          <div class="cell"><div class="node"><strong>Diligence</strong><small>Data room + seller profile</small></div></div>
+          <div class="cell"><div class="node"><strong>Ask &amp; clarify</strong><small>Q&amp;A + threads</small></div></div>
+          <div class="cell"><div class="dec"><div class="diamond"><div><strong>Qualifying bid?</strong><small>YES →</small></div></div><span class="no-outcome">NO · OUT</span></div></div>
+          <div class="cell"><div class="node dark"><strong>Sign &amp; settle</strong><small>Assume the interest</small></div></div>
+        </div>
+
+        <div class="row">
+          <div class="lane lane-atlas"><span>ATLAS</span></div>
+          <div class="cell"><div class="node"><strong>Verify</strong><small>Ownership &amp; data</small></div></div>
+          <div class="cell"><div class="node"><strong>Qualify &amp; match</strong><small>Control access</small></div></div>
+          <div class="cell"><div class="node"><strong>Manage diligence</strong><small>Track activity</small></div></div>
+          <div class="cell"><div class="node"><strong>Broker Q&amp;A</strong><small>Log every answer</small></div></div>
+          <div class="cell"><div class="node"><strong>Run process</strong><small>Compare execution</small></div></div>
+          <div class="cell"><div class="dec"><div class="diamond"><div><strong>Compliance approved?</strong><small>YES →</small></div></div><span class="no-outcome">NO · PAUSE</span><span class="no-outcome">GP NO · NEXT BIDDER</span></div></div>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i class="lg-node"></i> Process step</span>
+        <span><i class="lg-dec"></i> Decision point</span>
+        <span><i class="lg-no"></i> Exception outcome</span>
+        <span style="margin-left:auto;color:var(--soft)">Atlas is the only participant present in all six stages</span>
+      </div>
+    </div>
+    <div class="footer"><span>Atlas Marketplace &nbsp;·&nbsp; User journeys</span><b>3</b></div>
+  </section>
+
+  <!-- 4 -->
+  <section class="slide">
+    <div class="body">
+      <div class="eyebrow">Lane one</div>
+      <h2>Seller journey — the LP exiting</h2>
+      <p class="lead" style="margin-top:8px">A family office rebalancing a mature commitment. Six steps, two real decisions.</p>
+      <div class="two-col">
+        <div class="steps">
+          <div class="step"><div class="idx">1</div><div><strong>Create the opportunity</strong><p>Fund details, NAV, unfunded commitment, ownership, timing.</p></div></div>
+          <div class="step is-decision"><div class="idx">?</div><div><strong>Is the interest transferable?</strong><p>Atlas reads the LPA, identifies consent and ROFR provisions, and issues a written legal opinion.</p><span class="if-no">NO — process stops. Nothing is marketed</span></div></div>
+          <div class="step"><div class="idx">3</div><div><strong>Approve the anonymous teaser</strong><p>And approve the buyer shortlist. The seller keeps control of their own distribution list.</p></div></div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="idx">4</div><div><strong>Answer the logged Q&amp;A</strong><p>Once, to all qualified buyers at the same time, within a one-business-day SLA.</p></div></div>
+          <div class="step is-decision"><div class="idx">?</div><div><strong>Is there a bid worth accepting?</strong><p>Compare economics <em>and</em> execution certainty side by side.</p><span class="if-no">NO — reprice and reopen, or withdraw</span></div></div>
+          <div class="step"><div class="idx">6</div><div><strong>Sign and settle</strong><p>Through compliance, GP consent and escrow. Proceeds on the agreed date.</p></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>Atlas Marketplace &nbsp;·&nbsp; User journeys</span><b>4</b></div>
+  </section>
+
+  <!-- 5 -->
+  <section class="slide">
+    <div class="body">
+      <div class="eyebrow">Lane two</div>
+      <h2>Buyer journey — the secondaries fund</h2>
+      <p class="lead" style="margin-top:8px">A specialist buyer with a mandate. Three gates before it can even see the fund.</p>
+      <div class="two-col">
+        <div class="steps">
+          <div class="step"><div class="idx">1</div><div><strong>Discover matched opportunities</strong><p>Curated by mandate, never an open search — a catalogue would leak seller intent.</p></div></div>
+          <div class="step is-decision"><div class="idx">?</div><div><strong>Am I qualified, and do I accept the NDA?</strong><p>KYC/AML clearance, then a binding NDA before the fund identity is released.</p><span class="if-no">NO — denied, or no data room access</span></div></div>
+          <div class="step"><div class="idx">3</div><div><strong>Diligence the position</strong><p>Capital account statement, quarterly report, LPA, portfolio detail, and the counterparty's profile.</p></div></div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="idx">4</div><div><strong>Ask and challenge</strong><p>Questions go to every qualified buyer at once. Valuation challenges are logged against specific NAV components.</p></div></div>
+          <div class="step is-decision"><div class="idx">?</div><div><strong>Is my price and structure competitive?</strong><p>A structured bid: price, payment, conditions, unfunded treatment, timing.</p><span class="if-no">NO — withdraw; recorded on the buyer's profile</span></div></div>
+          <div class="step"><div class="idx">6</div><div><strong>Sign and settle</strong><p>Deposit, confirmatory diligence, then assume the commitment including its unfunded obligation.</p></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>Atlas Marketplace &nbsp;·&nbsp; User journeys</span><b>5</b></div>
+  </section>
+
+  <!-- 6 -->
+  <section class="slide">
+    <div class="body">
+      <div class="eyebrow">Lane three</div>
+      <h2>Atlas journey — the operating model</h2>
+      <p class="lead" style="margin-top:8px">Atlas is the only participant present in all six stages. That is the commercial argument for a venue existing at all.</p>
+      <div class="cards" style="grid-template-columns:1fr 1fr 1fr; gap:13px">
+        <div class="card"><span class="pill">01 · DISCOVER</span><strong>Verify</strong><p>Reconcile the capital account statement, review the LPA and side letters, confirm the GP contact. A badge is granted only after this.</p></div>
+        <div class="card"><span class="pill">02 · QUALIFY</span><strong>Qualify and match</strong><p>Score mandate fit, gate access on KYC and NDA, and release identity progressively rather than all at once.</p></div>
+        <div class="card"><span class="pill">03 · DILIGENCE</span><strong>Manage diligence</strong><p>Track document-level activity, so the seller can see who is genuinely working the deal and who is fishing.</p></div>
+        <div class="card"><span class="pill">04 · ASK</span><strong>Broker Q&amp;A</strong><p>Enforce simultaneous disclosure to every qualified buyer and keep an attributable record of every answer.</p></div>
+        <div class="card"><span class="pill">05 · COMPETE</span><strong>Run the process</strong><p>Sealed rounds, normalised bids, and a certainty score — so a 93% bid with deferred consideration does not beat a 92.5% bid paid at close by default.</p></div>
+        <div class="card"><span class="pill amber">06 · CLOSE</span><strong>Compliance, GP and settlement</strong><p>KYC/AML, GP consent and the ROFR clock, documentation, escrow settlement.</p></div>
+      </div>
+    </div>
+    <div class="footer"><span>Atlas Marketplace &nbsp;·&nbsp; User journeys</span><b>6</b></div>
+  </section>
+
+  <!-- 7 -->
+  <section class="slide">
+    <div class="body">
+      <div class="eyebrow">Decision points</div>
+      <h2>What each side is actually deciding</h2>
+      <table>
+        <thead><tr><th style="width:16%">Decision</th><th style="width:26%">The question</th><th style="width:38%">What informs it</th><th style="width:20%">If no</th></tr></thead>
+        <tbody>
+          <tr><td>Transferable?<span class="pill" style="margin-left:6px">SELLER</span></td><td>Can this interest legally change hands?</td><td>LPA transfer provisions, GP consent rights, right of first refusal, side letters</td><td><span class="pill stop">Process stops — nothing marketed</span></td></tr>
+          <tr><td>Qualified?<span class="pill" style="margin-left:6px">BUYER</span></td><td>Is this counterparty permitted to see the deal?</td><td>KYC/AML, professional-client status, mandate fit, cheque size</td><td><span class="pill stop">Denied — no fund identity revealed</span></td></tr>
+          <tr><td>NDA signed?<span class="pill" style="margin-left:6px">BUYER</span></td><td>Is it worth deeper diligence?</td><td>Teaser quality, the seller's verified position and process record</td><td><span class="pill stop">No data room access</span></td></tr>
+          <tr><td>Qualifying bid?<span class="pill" style="margin-left:6px">BUYER</span></td><td>Do we bid, and on what terms?</td><td>Data room, NAV evidence, visible demand, internal approvals</td><td><span class="pill stop">Out — honest pass is recorded</span></td></tr>
+          <tr><td>Worth accepting?<span class="pill" style="margin-left:6px">SELLER</span></td><td>Is any bid better than holding?</td><td>Price % of NAV, payment structure, conditions, close speed, certainty score</td><td><span class="pill stop">Reprice and reopen, or withdraw</span></td></tr>
+          <tr><td>Compliance cleared?<span class="pill amber" style="margin-left:6px">ATLAS</span></td><td>Are both sides clean to transact?</td><td>KYC, AML, sanctions, source of funds</td><td><span class="pill stop">Pause — nothing continues</span></td></tr>
+          <tr><td>GP consent?<span class="pill amber" style="margin-left:6px">GP</span></td><td>Will the manager permit the transfer?</td><td>LPA terms, transferee eligibility, ROFR window outcome</td><td><span class="pill stop">Next shortlisted bidder</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="footer"><span>Atlas Marketplace &nbsp;·&nbsp; User journeys</span><b>7</b></div>
+  </section>
+
+  <!-- 8 -->
+  <section class="slide">
+    <div class="body">
+      <div class="eyebrow">The part most concepts leave out</div>
+      <h2>Four ways a process legitimately ends</h2>
+      <p class="lead" style="margin-top:8px">In this asset class a meaningful share of processes do not close. A journey that only shows the happy path is not describing the market — it is describing a mock-up.</p>
+      <div class="cards" style="grid-template-columns:1fr 1fr">
+        <div class="card"><span class="tag">NO · STOP</span><strong>Transferability fails</strong><p>A blocking restriction in the LPA prevents the transfer. Atlas stops before marketing and no buyer is ever approached — which protects the seller's confidentiality and Atlas's credibility.</p></div>
+        <div class="card"><span class="tag">NO · DENY / NO ACCESS</span><strong>The buyer is not qualified, or will not sign</strong><p>Excluded at KYC, or held outside the data room until the NDA is countersigned. Identity and fund economics are released progressively, never by default.</p></div>
+        <div class="card"><span class="tag">NO · OUT</span><strong>No qualifying bid</strong><p>Nobody bids, or every bid sits below the seller's expectation. The seller reprices and reopens, or withdraws. An honest pass is recorded and useful signal.</p></div>
+        <div class="card"><span class="tag">NO · PAUSE / NO · NEXT BIDDER</span><strong>Compliance fails, or the GP declines</strong><p>A compliance exception freezes the entire process. A GP rejection does not collapse the deal — Atlas reconfirms the next shortlisted bidder and restarts consent, because consent is the most common reason a signed deal dies.</p></div>
+      </div>
+      <div class="callout" style="margin-top:18px">
+        <strong>The design principle</strong>
+        <p>Exception paths stop, pause or advance to the next bidder. They never loop back silently and they are never left in someone's inbox.</p>
+      </div>
+    </div>
+    <div class="footer"><span>Atlas Marketplace &nbsp;·&nbsp; User journeys</span><b>8</b></div>
+  </section>
+
+  <!-- 9 -->
+  <section class="slide">
+    <div class="body">
+      <div class="eyebrow">Backbone</div>
+      <h2>Fifteen states, one owner each</h2>
+      <p class="lead" style="margin-top:8px">Every screen in the prototype is bound to one of these states. The seller always knows where the process stands and what happens next.</p>
+      <div class="flowline">
+        <div class="chip"><b>01</b> Draft</div>
+        <div class="chip"><b>02</b> Verification</div>
+        <div class="chip"><b>03</b> Transferability</div>
+        <div class="chip"><b>04</b> Teaser</div>
+        <div class="chip"><b>05</b> Matching</div>
+        <div class="chip"><b>06</b> Matching &amp; NDA</div>
+        <div class="chip"><b>07</b> Data room</div>
+        <div class="chip"><b>08</b> Bidding</div>
+        <div class="chip"><b>09</b> Final bids</div>
+        <div class="chip"><b>10</b> Buyer selected</div>
+        <div class="chip"><b>11</b> Compliance</div>
+        <div class="chip"><b>12</b> GP approval &amp; ROFR</div>
+        <div class="chip"><b>13</b> Documentation</div>
+        <div class="chip"><b>14</b> Settlement</div>
+        <div class="chip ok"><b>15</b> Completed</div>
+      </div>
+      <div class="cards" style="grid-template-columns:1fr 1fr; margin-top:26px">
+        <div class="card" style="border-color:#eccfcf"><span class="tag" style="align-self:flex-start">NON-FAILURE TERMINALS</span><p style="font-size:11.5px">Three states end the process without anything going wrong: <strong>the seller withdraws</strong>, <strong>no bid qualifies</strong>, and <strong>the ROFR is exercised</strong> by another LP. The prototype shows all three rather than pretending every listing closes.</p></div>
+        <div class="card"><span class="pill amber" style="align-self:flex-start">HARD STOP</span><p style="font-size:11.5px">State 11 is the only true freeze. A compliance exception halts documentation and settlement entirely — it is not a warning, and progress does not resume until it clears.</p></div>
+      </div>
+    </div>
+    <div class="footer"><span>Atlas Marketplace &nbsp;·&nbsp; User journeys</span><b>9</b></div>
+  </section>
+
+  <!-- 10 -->
+  <section class="slide">
+    <div class="body">
+      <div class="eyebrow">Illustrative</div>
+      <h2>One commitment, end to end</h2>
+      <p class="lead" style="margin-top:8px">The happy path for a single interest, as shown in the prototype. Timings are illustrative.</p>
+      <div class="tl">
+        <div class="tl-head"><div>DAY</div><div>SELLER (LP)</div><div>BUYER</div><div>ATLAS</div></div>
+        <div class="tl-row"><div class="day">0</div><div>Creates the opportunity</div><div>Mandate already live</div><div>Verifies the position, reviews the LPA</div></div>
+        <div class="tl-row"><div class="day">2</div><div>Approves the anonymous teaser</div><div>Sees it as a matched opportunity</div><div>Confirms transferable; matches and invites</div></div>
+        <div class="tl-row"><div class="day">4</div><div>Grants data room access</div><div>Signs the NDA; identity released</div><div>Logs qualification and NDA</div></div>
+        <div class="tl-row"><div class="day">5–12</div><div>Answers Q&amp;A once, to all buyers</div><div>Diligences the position; challenges a NAV input</div><div>Brokers Q&amp;A; tracks document activity</div></div>
+        <div class="tl-row"><div class="day">14</div><div>Reviews indicative bids</div><div>Submits an indicative bid</div><div>Runs the sealed first round</div></div>
+        <div class="tl-row"><div class="day">21</div><div>Shortlists two of three</div><div>Final bid after full diligence</div><div>Normalises bids; runs the final round</div></div>
+        <div class="tl-row"><div class="day">24</div><div>Selects 92.5% over 93.0%</div><div>Selected on certainty</div><div>Opens compliance</div></div>
+        <div class="tl-row"><div class="day">28–58</div><div>Signs and receives proceeds</div><div>Deposits and assumes the interest</div><div>Compliance, GP consent, ROFR, settlement</div></div>
+      </div>
+    </div>
+    <div class="footer"><span>Atlas Marketplace &nbsp;·&nbsp; User journeys</span><b>10</b></div>
+  </section>
+
+  <!-- 11 -->
+  <section class="slide closing">
+    <div class="body" style="justify-content:center">
+      <div class="eyebrow on-dark">See it running</div>
+      <h1>The journeys are implemented, not just drawn</h1>
+      <div class="rule" style="width:54px;height:3px;background:#2b705b;margin:24px 0"></div>
+      <p style="max-width:760px">Thirteen screens across two switchable workspaces. The sidebar switches between the seller's view and the buyer's, and the journey map highlights the lane you are in.</p>
+      <a class="url" href="https://samm12331231.github.io/atlas-marketplace/">samm12331231.github.io/atlas-marketplace</a>
+      <div class="click-list">
+        <div><b>01</b><span><strong style="color:#fff">Journey map</strong> — the whole model on one page</span></div>
+        <div><b>02</b><span><strong style="color:#fff">Transferability</strong> — click <em>Simulate failed review</em> for the hard stop</span></div>
+        <div><b>03</b><span><strong style="color:#fff">Buyer profile</strong> — toggle <em>Before NDA</em> to see masking</span></div>
+        <div><b>04</b><span><strong style="color:#fff">Seller profile</strong> — the same rule, seen from the buyer's side</span></div>
+        <div><b>05</b><span><strong style="color:#fff">Compare bids</strong> — certainty beats headline price</span></div>
+        <div><b>06</b><span><strong style="color:#fff">Closing</strong> — Scenario controls: pause compliance, or reject GP consent</span></div>
+      </div>
+    </div>
+    <div class="footer" style="border-color:#1b3247;color:#5f7688"><span>Atlas Marketplace &nbsp;·&nbsp; User journeys</span><b style="color:#7f97a7">11</b></div>
+  </section>
+
+</div>
+
+<div class="hud">
+  <button onclick="show(i-1)">←</button>
+  <span id="counter">1 / 11</span>
+  <button onclick="show(i+1)">→</button>
+  <span style="opacity:.6">arrows · F11 full screen · Cmd+P for PDF</span>
+</div>
+
+<script>
+  var slides = [].slice.call(document.querySelectorAll(".slide"));
+  var i = 0;
+  function show(n) {
+    if (n < 0) n = 0;
+    if (n > slides.length - 1) n = slides.length - 1;
+    i = n;
+    slides.forEach(function (s, k) { s.classList.toggle("active", k === i); });
+    document.getElementById("counter").textContent = (i + 1) + " / " + slides.length;
+  }
+  function fit() {
+    var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720) * 0.94;
+    slides.forEach(function (el) { el.style.transform = "scale(" + s + ")"; });
+  }
+  document.addEventListener("keydown", function (e) {
+    if (["ArrowRight", "ArrowDown", "PageDown", " "].indexOf(e.key) > -1) { show(i + 1); e.preventDefault(); }
+    if (["ArrowLeft", "ArrowUp", "PageUp"].indexOf(e.key) > -1) { show(i - 1); e.preventDefault(); }
+    if (e.key === "Home") show(0);
+    if (e.key === "End") show(slides.length - 1);
+  });
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (t.closest && t.closest(".hud")) return;
+    if (t.closest && t.closest("a")) return;
+    show(i + 1);
+  });
+  window.addEventListener("resize", fit);
+  fit();
+  var hash = parseInt((location.hash || "").replace("#", ""), 10);
+  show(isNaN(hash) ? 0 : hash - 1);
+</script>
+</body>
+</html>

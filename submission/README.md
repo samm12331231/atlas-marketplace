@@ -11,7 +11,7 @@
 | # | Brief's requested deliverable | File |
 | --- | --- | --- |
 | 1 | Concept presentation / written proposal | [CONCEPT.md](CONCEPT.md) |
-| 2 | User journeys and flows | [JOURNEYS.md](JOURNEYS.md) — standalone, plus [CONCEPT.md §6](CONCEPT.md) and the **Journey map** screen in the prototype |
+| 2 | User journeys and flows | **[journeys-deck.pdf](journeys-deck.pdf)** (11-slide presentation) · [journeys-deck.html](journeys-deck.html) (present from a browser) · [JOURNEYS.md](JOURNEYS.md) (written detail) · [CONCEPT.md §6](CONCEPT.md) |
 | 3 | Visual concept — wireframes / screens / clickable prototype | The `atlas-marketplace` prototype — 13 screens across two switchable workspaces |
 | 4 | AI and tools disclosure | [DISCLOSURE.md](DISCLOSURE.md) |
 | 5 | Supporting links | **<https://samm12331231.github.io/atlas-marketplace/>** — public, no sign-in, no access request |
@@ -45,6 +45,28 @@ npm run dev
 ```
 
 Then open the printed local URL (default <http://localhost:8443>).
+
+---
+
+## The user journey presentation
+
+**Slides:** [journeys-deck.pdf](journeys-deck.pdf) — 11 slides, 16:9, ready to attach.
+**Present from the browser:** [journeys-deck.html](journeys-deck.html) — double-click it. Arrow keys move between slides, `F11` goes full screen, `Cmd/Ctrl+P` re-exports the PDF. It is a single self-contained file with no dependencies and no build step.
+
+The deck takes the argument the written documents can only state: **the exception paths are the substance.** In this asset class a meaningful share of processes legitimately end without a transaction, so six of the eleven slides are about the decision points and the four ways a process ends — transferability failure, non-qualification, no qualifying bid, and compliance pause or GP rejection. That is the part most concepts leave out, and it is the part a panel can test you on.
+
+| Slide | Content |
+| --- | --- |
+| 1 | Title |
+| 2 | The six stages, and why ASK is its own stage |
+| 3 | The journey map — three lanes × six stages, with decision diamonds and exception outcomes |
+| 4–5 | Seller and buyer journeys, step by step, with the decision points inline |
+| 6 | The Atlas operating model |
+| 7 | Decision points — the question, what informs it, and what happens if the answer is no |
+| 8 | The four exception outcomes |
+| 9 | The 15 transaction states and the non-failure terminals |
+| 10 | One commitment end to end, as an illustrative timeline |
+| 11 | Where to see it running |
 
 ---
 
