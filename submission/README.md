@@ -11,7 +11,7 @@
 | # | Brief's requested deliverable | File |
 | --- | --- | --- |
 | 1 | Concept presentation / written proposal | [CONCEPT.md](CONCEPT.md) |
-| 2 | User journeys and flows | [CONCEPT.md §6](CONCEPT.md) plus the **Journey map** screen in the prototype |
+| 2 | User journeys and flows | [JOURNEYS.md](JOURNEYS.md) — standalone, plus [CONCEPT.md §6](CONCEPT.md) and the **Journey map** screen in the prototype |
 | 3 | Visual concept — wireframes / screens / clickable prototype | The `atlas-marketplace` prototype (11 screens) |
 | 4 | AI and tools disclosure | [DISCLOSURE.md](DISCLOSURE.md) |
 | 5 | Supporting links | **<https://samm12331231.github.io/atlas-marketplace/>** — public, no sign-in, no access request |
