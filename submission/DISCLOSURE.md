@@ -1,6 +1,6 @@
 # AI and Tools Disclosure
 
-**Candidate:** Sampath Kumar
+**Candidate:** Samyukth Kalathil
 **Task:** Atlas Marketplace — Intern, Technology, Greenstone (GSE Equity)
 **Date:** 30 September 2026
 
@@ -13,8 +13,9 @@ I used AI tools extensively in this task. This document says exactly which tools
 | Tool | What it was used for | What it produced | What I did with the output |
 | --- | --- | --- | --- |
 | **Figma Make** | Generating the starting scaffold for the prototype | A runnable React 19 + Vite + TypeScript app shell: sidebar navigation, status tracker, design system, and first-pass screens (dashboard, create listing, transferability, teaser, data room, bid, compare, closing, journey map) | Kept the shell and design system; removed what did not fit the concept; extended it substantially (see §3) |
-| **AI coding assistant (Claude / Codebuff)** | Writing and refactoring the prototype code | The *Buyer profile* and *Q&A and messages* screens, the six-stage three-lane journey map, all supporting CSS, and repairs to the scaffold's TypeScript | Reviewed every screen in the running app, corrected the design and copy, and fixed the errors it introduced and inherited |
-| **AI chat assistant** | Research and pressure-testing | Explanations of secondary-market mechanics (unfunded commitments, GP consent, right of first refusal, % of NAV pricing, DPV, LP-led vs GP-led) and challenges to my reasoning on valuation and bidding | Independently checked the mechanics against public secondaries market practice before using them; adopted the framing, rejected several suggestions (see §4) |
+| **AI coding assistant (Claude / Codebuff)** | Writing and refactoring the prototype code | The *Buyer profile*, *Q&A and messages*, *Deal flow* and *Seller profile* screens, the two-workspace navigation and role switcher, the six-stage three-lane journey map, all supporting CSS, and repairs to the scaffold's TypeScript | Reviewed every screen in the running app, corrected the design and copy, and fixed the errors it introduced and inherited |
+| **AI chat assistant** | Research and pressure-testing | Explanations of secondary-market mechanics (unfunded commitments, GP consent, right of first refusal, % of NAV pricing, LP-led vs GP-led) and challenges to my reasoning on valuation and bidding | Independently checked the mechanics against public secondaries market practice before using them; adopted the framing, rejected several suggestions (see §4) |
+| **Public web sources** | Grounding the strategic-fit argument in §1.4 of the concept | The firm's public positioning as a GCC placement agent, its investor and family-office relationships, and its DIFC expansion | Used only publicly stated positioning; internal priorities are not assumed or claimed |
 | **Spreadsheet / plain notes** | Structuring the concept, prioritisation, assumptions, alternatives | The v1 in/out scope, assumption list, alternatives table and state machine | Written by me, informed by the AI discussion above |
 | **Not used** | — | No licensed or scraped third-party market data; no real fund documents; no confidential information | All named entities and all figures in the prototype are fictional and illustrative |
 
@@ -40,8 +41,9 @@ AI was used as a **sparring partner and a fast implementer**, not as the source 
 1. **Scaffold (Figma Make).** Generated a working React/TypeScript app with a dense, institutional design system and a first pass at the screens. This gave me a navigable starting point instead of a blank file.
 2. **Filling the gaps I identified.** Reviewing the scaffold against the brief, three requirements were materially missing: **buyer/seller profiles**, **communication**, and **discovery/trust signals**. I specified what those screens needed to contain — masked identity before NDA, verified credentials, mandate, attributable track record, approved references, behavioural metrics; and a logged one-to-many Q&A channel plus a direct thread — and had the AI implement them.
 3. **Correcting the journey model.** The scaffold's journey map had five stages and omitted the step where buyers actually *ask* questions — which is where price is really set. I restructured it to **six stages** (Discover, Qualify, Diligence, Ask, Compete, Close) and three lanes (Seller, Buyer, Atlas), with the failure branches made explicit.
-4. **Rewriting copy as the domain demanded.** Label text, metric names, bid fields and warnings were rewritten to match how a secondaries process actually works — for example, the status step "NDA" became **"Matching & NDA"** to reflect that qualification and matching happen together, and the unfunded commitment was added as an explicit bid term.
-5. **Repairing the scaffold's bugs.** The generated code contained five TypeScript errors (missing semicolons in inline type annotations). The bundler tolerated them; the compiler did not. I found them by type-checking and had them fixed.
+4. **Restructuring the navigation around the two sides.** The first version was a single linear pipeline, which framed the whole product as the seller's workspace and showed the buyer only as embedded views. Since the brief's first required area is the *relationship* between the two sides, I split it into two switchable workspaces and added the two screens the buyer side was missing entirely — *Deal flow* (discovery) and *Seller profile* (assessing the counterparty). A review of an alternative prototype built by a family member prompted the rethink of that structure.
+5. **Rewriting copy as the domain demanded.** Label text, metric names, bid fields and warnings were rewritten to match how a secondaries process actually works — for example, the status step "NDA" became **"Matching & NDA"** to reflect that qualification and matching happen together, and the unfunded commitment was added as an explicit bid term.
+6. **Repairing the scaffold's bugs.** The generated code contained five TypeScript errors (missing semicolons in inline type annotations). The bundler tolerated them; the compiler did not. I found them by type-checking and had them fixed.
 
 ---
 
@@ -60,7 +62,9 @@ AI was used as a **sparring partner and a fast implementer**, not as the source 
 **Code correctness**
 - Ran the TypeScript compiler over the project — it reports no errors.
 - Ran a production build — it completes, with a single JS bundle of ~245 kB (72 kB gzipped).
-- Walked every screen in the running application at desktop width and exercised each interactive element: the NDA masked/unmasked toggle, the simulated failed transferability review, the bid comparison and shortlisting selection, the compliance-failure and GP-rejection branches on the closing dashboard, and the Q&A screen's logged questions and message thread.
+- Walked every screen in the running application at desktop width and exercised each interactive element: the NDA masked/unmasked toggle on **both** the buyer and seller profiles, the simulated failed transferability review, the bid comparison and shortlisting selection, the compliance-failure and GP-rejection branches on the closing dashboard, and the Q&A screen's logged questions and message thread.
+- Checked the role switcher both ways: that switching changes the signed-in user, the navigation and the journey-map lane, that shared screens keep whichever workspace you are in, and that no text overflows and no horizontal scroll appears at 1440px.
+- Confirmed the strategic-fit section in §1.4 against the firm's public positioning rather than assuming anything about its internal priorities.
 
 **Design and content correctness**
 - Re-read the brief line by line against the built screens to confirm all three required marketplace areas are answered in product, not just in prose.

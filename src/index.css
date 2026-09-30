@@ -422,3 +422,30 @@ header { height: 60px; background: var(--white); border-bottom: 1px solid var(--
   .process-node { width: 118px; }
   .decision-wrap { transform: scale(.9); }
 }
+
+/* ---------- Role switcher: seller (LP) / buyer workspaces ---------- */
+.role-switch { display: flex; gap: 4px; padding: 3px; margin-bottom: 10px; border: 1px solid #29435a; border-radius: 8px; background: #0e2941; }
+.role-switch button { flex: 1; border: 0; background: transparent; color: #91a4b3; min-height: 30px; font-size: 11px; font-weight: 650; border-radius: 6px; }
+.role-switch button:hover { color: white; }
+.role-switch button.active { color: white; background: var(--green); }
+.workspace-switch { margin-bottom: 20px; }
+.title-actions { display: flex; align-items: center; gap: 10px; }
+
+/* ---------- Buyer deal flow ---------- */
+.flow-layout { display: grid; grid-template-columns: 1.55fr 1fr; gap: 17px; align-items: start; }
+.flow-main { padding: 18px 0 4px; }
+.flow-main > .section-title { padding: 0 22px 4px; }
+.flow-main > .section-title:not(:first-child) { padding-top: 22px; }
+.flow-row { width: 100%; border: 0; border-top: 1px solid var(--line); background: transparent; display: grid; grid-template-columns: 46px 1fr auto; gap: 15px; align-items: center; padding: 17px 22px; text-align: left; }
+.flow-row:first-of-type { border-top: 0; }
+.flow-row:hover { background: #f3f8f5; }
+.flow-row strong { display: block; font-size: 13px; font-weight: 650; margin-bottom: 3px; }
+.flow-row small { display: block; color: var(--muted); font-size: 10px; line-height: 1.5; }
+.flow-row .flow-note { color: var(--green); }
+.flow-row .fit { width: 46px; height: 46px; border: 2px solid var(--green); border-radius: 50%; color: var(--green); display: grid; place-items: center; font-family: Georgia, serif; font-size: 17px; }
+.flow-right { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; }
+.flow-right > span { font-size: 12px; font-weight: 650; }
+
+/* ---------- Journey map: highlight the signed-in workspace's lane ---------- */
+.map-row-contents.is-current { background: #f2f8f5; box-shadow: inset 3px 0 var(--green); }
+.map-row-contents.is-current .lane-label { background: #eaf3ee; }

@@ -6,6 +6,8 @@
 
 Stage names, decision points and outcomes below match the prototype's *Journey map* screen and its 15-state status tracker exactly.
 
+The prototype implements these journeys as **two switchable workspaces** — the LP seller's and the secondaries buyer's — because a single linear pipeline hides one of the two sides the brief asks about. The journey map highlights the lane belonging to whichever workspace you are in.
+
 ---
 
 ## 1. The six stages

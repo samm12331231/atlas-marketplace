@@ -1,6 +1,6 @@
 # Atlas Marketplace — Concept Proposal
 
-**Candidate:** Sampath Kumar
+**Candidate:** Samyukth Kalathil
 **Role applied for:** Intern, Technology — Greenstone (GSE Equity), Dubai
 **Date:** 30 September 2026
 **Submitted to:** Cyrus Alavi, Managing Director and Head of Technology
@@ -11,7 +11,7 @@
 | --- | --- | --- |
 | 1 | Written concept proposal | this document |
 | 2 | User journeys and decision points | [Section 6](#6-user-journeys-and-decision-points) and the *Journey map* screen in the prototype |
-| 3 | Visual concept — clickable prototype | `atlas-marketplace` prototype (11 screens, see [Section 10](#10-how-the-prototype-maps-to-the-brief)) |
+| 3 | Visual concept — clickable prototype | `atlas-marketplace` prototype (13 screens across two switchable workspaces, see [Section 10](#10-how-the-prototype-maps-to-the-brief)) |
 | 4 | AI and tools disclosure | [DISCLOSURE.md](DISCLOSURE.md) |
 | 5 | Supporting links | [README.md](README.md) |
 
@@ -61,6 +61,27 @@ I chose fund secondaries over the more obvious options deliberately:
 - **Direct stakes in private companies** — almost the same trust and valuation problems, but deal-by-deal, one-off transactions make a repeatable product process much harder to justify for a first release. This is the natural **v2** (see [Section 8.4](#84-roadmap-after-v1)).
 
 Fund secondaries let me answer all three required marketplace areas with real substance, because each one is a genuine problem rather than a screen I could assume away.
+
+### 1.4 Why this fits Greenstone specifically
+
+A marketplace needs two sides. The question a firm should ask is not only "is this a good market?" but "why us?" Four reasons this suits GSE Equity in particular.
+
+**1. Greenstone already sits on both sides of this trade.** Atlas needs sellers who hold fund interests and buyers who want them. The buy side *is* Greenstone's client base — the region's institutional investors and family offices. The consent side is the GP universe the firm already raises from. A new entrant has to build both from nothing; Greenstone starts with the relationships already in place.
+
+**2. Secondaries is a relationship business wearing a technology costume.** Price discovery here depends on trust, introductions have to be permissioned, and the scarce asset is reputational capital rather than software. That inverts the usual objection — *why would an incumbent beat a startup?* For an asset that moves by trusted introduction, the incumbent is structurally advantaged, and a pure-software entrant cannot fake it.
+
+**3. The GCC is underserved by a market that is London- and New York-centric.** The secondary advisory business is concentrated in those two centres. A regional venue for LP-led secondaries has no established incumbent, which is the rare case where a defensible position is still available.
+
+**4. A placement firm's client base is exactly the population that accumulates this problem.** Capital placed into a closed-end fund is committed for a decade or more. Serving the same LP at the point of *exit* — not only the point of commitment — deepens a relationship Greenstone already holds, and turns a one-off placement into a multi-decade one.
+
+Two further mechanics make the fit tighter than it first appears:
+
+- **GP consent becomes access rather than friction.** For an outsider, obtaining consent and reading the LPA is the hardest gate. For a firm whose business is knowing GPs, it is routine.
+- **The economics mirror placement.** A success fee on close is the same shape as a placement mandate, so Atlas does not require a new revenue model to be understood internally.
+
+**The honest objection:** *why wouldn't Greenstone simply broker secondaries off-platform, as it brokers everything else?* Because that is what happens today, and it is why the opportunity exists. The durable asset is not the introduction — it is the **comps database**: which vintages clear at what percentage of NAV, how consent timelines behave, what buyers actually pay. That only accumulates if the process runs on a platform.
+
+> *Basis:* this section draws on GSE Equity's public positioning as the GCC's placement firm connecting regional investors with global fund managers, its institutional and family-office relationships, and its DIFC expansion. Internal priorities are not mine to assume, and I would expect to test all of it.
 
 ---
 
@@ -409,10 +430,14 @@ A seller needs only one place to run everything, so a single good process wins a
 
 ## 10. How the prototype maps to the brief
 
-The prototype (`atlas-marketplace`, 11 screens) is navigable from the sidebar; every screen is bound to a numbered state in the status tracker.
+The prototype (`atlas-marketplace`, 13 screens) is navigable from the sidebar; every screen is bound to a numbered state in the status tracker.
+
+The prototype now has **13 screens organised as two switchable workspaces** — the LP seller's and the secondaries buyer's — because the brief's first required area is the *relationship* between the two sides, and a single linear pipeline hides one of them. The sidebar carries a **Seller (LP) / Buyer** switcher, and the journey map highlights the lane belonging to whichever workspace you are in.
 
 | Brief requirement | Prototype screen |
 | --- | --- |
+| **Buyer-side discovery** (how buyers find opportunities without leaking seller intent) | *Deal flow* — mandate-matched opportunities with fit scores, no open search |
+| **How a buyer assesses the counterparty** (mirror of the seller assessing a buyer) | *Seller profile* — masked/unmasked identity, reconciled position facts, process record, references |
 | Seller creates and manages a listing | *Create opportunity* |
 | Is the position legally sellable? | *Transferability review* |
 | How buyers discover (without leaking the seller) | *Anonymous opportunity* |
@@ -422,7 +447,7 @@ The prototype (`atlas-marketplace`, 11 screens) is navigable from the sidebar; e
 | How a buyer bids | *Bid submission* — structured six-element bid |
 | How offers are compared and chosen | *Compare final bids* — certainty score, shortlisting, counter-offer log |
 | Compliance, GP consent, ROFR, settlement | *Closing dashboard* — milestones, exception paths, pause and fallback |
-| Journeys and decision points | *Journey map* — three lanes, six stages, decision diamonds, failure paths |
+| Journeys and decision points | *Journey map* — three lanes, six stages, decision diamonds, failure paths, with your own lane highlighted |
 
 ---
 

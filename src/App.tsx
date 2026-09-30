@@ -11,7 +11,11 @@ type Screen =
   | "bid"
   | "compare"
   | "closing"
+  | "flow"
+  | "sellerProfile"
   | "journey"
+
+type Role = "seller" | "buyer"
 
 type IconName =
   | "grid"
@@ -35,18 +39,40 @@ type IconName =
   | "id"
   | "chat"
 
-const screens: { id: Screen; label: string; icon: IconName }[] = [
+type NavItem = { id: Screen; label: string; icon: IconName }
+
+const sellerScreens: NavItem[] = [
   { id: "dashboard", label: "Opportunities", icon: "grid" },
   { id: "create", label: "Create opportunity", icon: "plus" },
   { id: "transfer", label: "Transferability", icon: "check" },
   { id: "teaser", label: "Anonymous teaser", icon: "eye" },
   { id: "profile", label: "Buyer profile", icon: "id" },
-  { id: "messages", label: "Q&A and messages", icon: "chat" },
-  { id: "room", label: "Secure data room", icon: "lock" },
-  { id: "bid", label: "Bid submission", icon: "bid" },
   { id: "compare", label: "Compare bids", icon: "compare" },
   { id: "closing", label: "Closing", icon: "close" },
 ]
+
+const buyerScreens: NavItem[] = [
+  { id: "flow", label: "Deal flow", icon: "grid" },
+  { id: "teaser", label: "Opportunity detail", icon: "eye" },
+  { id: "sellerProfile", label: "Seller profile", icon: "building" },
+  { id: "room", label: "Secure data room", icon: "lock" },
+  { id: "messages", label: "Q&A and messages", icon: "chat" },
+  { id: "bid", label: "Bid submission", icon: "bid" },
+]
+
+const navByRole: Record<Role, NavItem[]> = {
+  seller: sellerScreens,
+  buyer: buyerScreens,
+}
+
+const screens = [...sellerScreens, ...buyerScreens]
+
+const inRole = (role: Role, s: Screen) =>
+  navByRole[role].some((item) => item.id === s)
+
+const labelFor = (role: Role, s: Screen) =>
+  navByRole[role].find((item) => item.id === s)?.label ??
+  screens.find((item) => item.id === s)?.label
 
 const statusSteps = [
   "Draft",
@@ -77,6 +103,8 @@ const statusIndex: Record<Screen, number> = {
   bid: 8,
   compare: 8,
   closing: 11,
+  flow: 4,
+  sellerProfile: 5,
   journey: 0,
 }
 
@@ -337,17 +365,31 @@ function Metric({
   )
 }
 
-function Dashboard({ go }: { go: (s: Screen) => void }) {
+function Dashboard({
+  go,
+  switchRole,
+}: {
+  go: (s: Screen) => void
+  switchRole: (r: Role) => void
+}) {
   return (
     <>
       <PageTitle
-        eyebrow="Seller workspace"
+        eyebrow="Seller workspace · Summit View"
         title="Good morning, Alexandra."
         description="Three active opportunities require your attention."
         action={
-          <Button onClick={() => go("create")}>
-            <Icon name="plus" size={16} /> Create opportunity
-          </Button>
+          <div className="title-actions">
+            <Button
+              variant="secondary"
+              onClick={() => switchRole("buyer")}
+            >
+              <Icon name="eye" size={15} /> Switch to buyer view
+            </Button>
+            <Button onClick={() => go("create")}>
+              <Icon name="plus" size={16} /> Create opportunity
+            </Button>
+          </div>
         }
       />
       <div className="metrics-grid">
@@ -1115,6 +1157,382 @@ function BidSubmission({ go }: { go: (s: Screen) => void }) {
   )
 }
 
+const dealFlow = [
+  {
+    id: "OP-1048",
+    title: "US mid-market buyout · 2018 vintage",
+    sub: "North America · Harvesting · Diversified portfolio",
+    nav: "$70–75M",
+    fit: 94,
+    state: "In data room",
+    tone: "success" as const,
+    note: "NDA executed · fund identity released",
+    to: "room" as Screen,
+  },
+  {
+    id: "OP-1052",
+    title: "European growth · 2019 vintage",
+    sub: "Europe · Investing · Software-weighted",
+    nav: "$40–46M",
+    fit: 81,
+    state: "Teaser available",
+    tone: "info" as const,
+    note: "Identity withheld until NDA",
+    to: "teaser" as Screen,
+  },
+  {
+    id: "OP-1039",
+    title: "North American credit · 2021 vintage",
+    sub: "Private credit · Early · Senior loans",
+    nav: "$18–21M",
+    fit: 73,
+    state: "Below mandate",
+    tone: "warning" as const,
+    note: "Outside your vintage range",
+    to: "teaser" as Screen,
+  },
+]
+
+function DealFlow({
+  go,
+  switchRole,
+}: {
+  go: (s: Screen) => void
+  switchRole: (r: Role) => void
+}) {
+  return (
+    <>
+      <PageTitle
+        eyebrow="Buyer workspace · MeridianEvergreen"
+        title="Deal flow"
+        description="Opportunities matched to your mandate. Fund identity stays withheld until the NDA binds."
+        action={
+          <Button variant="secondary" onClick={() => switchRole("seller")}>
+            Switch to seller view
+          </Button>
+        }
+      />
+      <div className="flow-layout">
+        <div className="panel flow-main">
+          <div className="section-title">
+            <span>01</span>
+            <div>
+              <h2>Matched opportunities</h2>
+              <p>Atlas matches on mandate fields. There is no open search.</p>
+            </div>
+          </div>
+          {dealFlow.map((d) => (
+            <button
+              className="flow-row"
+              key={d.id}
+              onClick={() => go(d.to)}
+            >
+              <div className="fit">
+                <span>{d.fit}</span>
+              </div>
+              <div>
+                <strong>{d.title}</strong>
+                <small>{d.sub}</small>
+                <small className="flow-note">{d.note}</small>
+              </div>
+              <div className="flow-right">
+                <span>{d.nav}</span>
+                <Badge tone={d.tone}>{d.state}</Badge>
+              </div>
+            </button>
+          ))}
+          <div className="section-title">
+            <span>02</span>
+            <div>
+              <h2>Why you see these</h2>
+              <p>
+                Your mandate is a filter, not a search box. Sellers never learn
+                who was shown, only who asked for access.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="side-stack">
+          <div className="panel identity-card">
+            <div className="identity-top">
+              <i>ME</i>
+              <div>
+                <strong>MeridianEvergreen</strong>
+                <small>Evergreen secondary vehicle · London</small>
+              </div>
+            </div>
+            <div className="verify-strip">
+              <span>
+                <Icon name="shield" size={12} /> Atlas verified
+              </span>
+              <span>
+                <Icon name="check" size={12} /> KYC / AML clear
+              </span>
+              <span>
+                <Icon name="file" size={12} /> Prof. client
+              </span>
+            </div>
+          </div>
+          <div className="panel detail-card">
+            <h3>Your mandate</h3>
+            <dl>
+              <div>
+                <dt>Price range</dt>
+                <dd>88–95% NAV</dd>
+              </div>
+              <div>
+                <dt>Ticket band</dt>
+                <dd>$25–80M</dd>
+              </div>
+              <div>
+                <dt>Vintages</dt>
+                <dd>2016–2022</dd>
+              </div>
+              <div>
+                <dt>Structures</dt>
+                <dd>Single & LP strips</dd>
+              </div>
+              <div>
+                <dt>Decision window</dt>
+                <dd>4–6 weeks</dd>
+              </div>
+            </dl>
+            <div className="form-actions">
+              <Button variant="ghost">
+                <Icon name="plus" size={15} /> Edit mandate
+              </Button>
+            </div>
+          </div>
+          <div className="panel note-card">
+            <span>Why it is curated</span>
+            <p>
+              An open catalogue would leak every seller's intention to the
+              market and destroy the price they can achieve. Matching is
+              deliberate, and the seller approves the list.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="form-actions profile-actions">
+        <Button variant="ghost" onClick={() => go("sellerProfile")}>
+          <Icon name="building" size={15} /> View seller profile
+        </Button>
+        <Button variant="secondary" onClick={() => go("room")}>
+          Open secure data room <Icon name="arrow" size={16} />
+        </Button>
+      </div>
+    </>
+  )
+}
+
+const sellerProcessRecord = [
+  {
+    label: "2021 Buyout · $34M strip",
+    detail: "Closed at 90% NAV · 41 days",
+  },
+  {
+    label: "2019 Growth · $22M single",
+    detail: "Closed at 95% NAV · 29 days",
+  },
+  {
+    label: "2023 Credit · $17M single",
+    detail: "Closed at 87% NAV · 52 days",
+  },
+]
+
+const sellerSignals = [
+  { label: "Answered within one business day", value: 96 },
+  { label: "Questions answered in full", value: 88 },
+  { label: "Processes brought to close", value: 100 },
+]
+
+function SellerProfile({ go }: { go: (s: Screen) => void }) {
+  const [revealed, setRevealed] = useState(true)
+  return (
+    <>
+      <PageTitle
+        eyebrow="OP-1048 · Buyer view"
+        title="Seller 07 · Profile"
+        description="The counterparty's verified position and process record, before you commit capital."
+        action={
+          <div className="segmented">
+            <button
+              className={revealed ? "active" : ""}
+              onClick={() => setRevealed(true)}
+            >
+              Under NDA
+            </button>
+            <button
+              className={!revealed ? "active" : ""}
+              onClick={() => setRevealed(false)}
+            >
+              Before NDA
+            </button>
+          </div>
+        }
+      />
+      <div className="profile-layout">
+        <div className="side-stack">
+          <div className="panel identity-card">
+            <div className="identity-top">
+              {revealed ? <i>SV</i> : <i className="masked">?</i>}
+              <div>
+                <strong>
+                  {revealed ? "Summit View Family Office" : "Seller 07"}
+                </strong>
+                <small>
+                  {revealed
+                    ? "Single-family office · Geneva"
+                    : "Identity withheld until NDA"}
+                </small>
+              </div>
+            </div>
+            <div className="verify-strip">
+              <span>
+                <Icon name="shield" size={12} /> Atlas verified
+              </span>
+              <span>
+                <Icon name="file" size={12} /> Position reconciled
+              </span>
+              <span>
+                <Icon name="check" size={12} /> LPA reviewed
+              </span>
+            </div>
+          </div>
+          <div className="panel detail-card">
+            <h3>Position facts</h3>
+            <dl>
+              <div>
+                <dt>Fund</dt>
+                <dd>{revealed ? "Northbridge VII" : "Withheld"}</dd>
+              </div>
+              <div>
+                <dt>NAV</dt>
+                <dd>$72.4M</dd>
+              </div>
+              <div>
+                <dt>Unfunded</dt>
+                <dd>$8.2M</dd>
+              </div>
+              <div>
+                <dt>Ownership</dt>
+                <dd>1.84%</dd>
+              </div>
+              <div>
+                <dt>NAV as of</dt>
+                <dd>Sep 30, 2025</dd>
+              </div>
+              <div>
+                <dt>Transferability</dt>
+                <dd>Consent + ROFR</dd>
+              </div>
+            </dl>
+          </div>
+          <div className="panel note-card">
+            <span>Why this matters</span>
+            <p>
+              You are underwriting a position, not a company. Atlas reconciles
+              the capital account so the number you price against is the number
+              the GP reports.
+            </p>
+          </div>
+        </div>
+        <div className="panel profile-main">
+          <div className={`profile-body ${revealed ? "" : "is-masked"}`}>
+            <div className="section-title">
+              <span>01</span>
+              <div>
+                <h2>Seller profile</h2>
+                <p>
+                  A single-family office rebalancing a mature 2018-vintage
+                  commitment back toward its target allocation.
+                </p>
+              </div>
+            </div>
+            <div className="metrics-grid">
+              <Metric label="Price expectation" value="88–95% NAV" />
+              <Metric label="Motivation" value="Portfolio rebalance" />
+              <Metric label="Stated timeline" value="Sign in 60 days" />
+              <Metric label="Settlement" value="Q2 2026" />
+            </div>
+            <div className="section-title">
+              <span>02</span>
+              <div>
+                <h2>Process record</h2>
+                <p>Verified by Atlas against settlement records.</p>
+              </div>
+            </div>
+            {sellerProcessRecord.map((row) => (
+              <div className="track-row" key={row.label}>
+                <span>
+                  <strong>{row.label}</strong>
+                  <small>{row.detail}</small>
+                </span>
+                <Badge tone="success">Settled</Badge>
+              </div>
+            ))}
+            <div className="section-title">
+              <span>03</span>
+              <div>
+                <h2>Behavioural signals</h2>
+                <p>Measured on this platform, not self-reported.</p>
+              </div>
+            </div>
+            {sellerSignals.map((s) => (
+              <div className="mix-row" key={s.label}>
+                <span>{s.label}</span>
+                <div className="mix-bar">
+                  <i style={{ width: `${s.value}%` }} />
+                </div>
+                <small>{s.value}%</small>
+              </div>
+            ))}
+            <div className="section-title">
+              <span>04</span>
+              <div>
+                <h2>Buyer references</h2>
+                <p>Anonymized feedback from past counterparties.</p>
+              </div>
+            </div>
+            <div className="reference-quote">
+              “The NAV pack was clean and the seller never re-traded on the
+              mark.”
+              <small>— Secondaries fund buyer, Q1 2026</small>
+            </div>
+            <div className="reference-quote">
+              “Answered every question in the log, on time, and visible to all
+              bidders.”
+              <small>— Institutional buyer, Q3 2025</small>
+            </div>
+          </div>
+          {!revealed && (
+            <div className="mask-overlay">
+              <Icon name="lock" size={26} />
+              <strong>Position and counterparty protected</strong>
+              <p>
+                You see the anonymous teaser before qualification. The fund,
+                the seller and the reconciled position facts are released only
+                once the NDA binds both parties.
+              </p>
+              <Button onClick={() => setRevealed(true)}>
+                Simulate executed NDA
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="form-actions profile-actions">
+        <Button variant="ghost" onClick={() => go("messages")}>
+          <Icon name="chat" size={15} /> Open Q&A and messages
+        </Button>
+        <Button variant="secondary" onClick={() => go("bid")}>
+          Prepare your bid <Icon name="arrow" size={16} />
+        </Button>
+      </div>
+    </>
+  )
+}
+
 const shortlistStats = [
   { label: "Secondaries funds", value: 54 },
   { label: "Institutions & endowments", value: 31 },
@@ -1854,7 +2272,8 @@ const journey: { lane: string; cells: MapNode[][] }[] = [
   },
 ]
 
-function JourneyMap({ go }: { go: (s: Screen) => void }) {
+function JourneyMap({ go, role }: { go: (s: Screen) => void; role: Role }) {
+  const activeLane = role === "seller" ? "SELLER" : "BUYER"
   return (
     <div className="map-page">
       <PageTitle
@@ -1862,8 +2281,11 @@ function JourneyMap({ go }: { go: (s: Screen) => void }) {
         title="Atlas transaction journey"
         description="A confidential, controlled path from discovery to settlement."
         action={
-          <Button variant="secondary" onClick={() => go("dashboard")}>
-            Return to prototype
+          <Button
+            variant="secondary"
+            onClick={() => go(navByRole[role][0].id)}
+          >
+            Return to {role} workspace
           </Button>
         }
       />
@@ -1889,7 +2311,12 @@ function JourneyMap({ go }: { go: (s: Screen) => void }) {
           ),
         )}
         {journey.map((row) => (
-          <div className="map-row-contents" key={row.lane}>
+          <div
+            className={`map-row-contents ${
+              row.lane === activeLane ? "is-current" : ""
+            }`}
+            key={row.lane}
+          >
             <div className={`lane-label lane-${row.lane.toLowerCase()}`}>
               <span>{row.lane}</span>
             </div>
@@ -1993,13 +2420,28 @@ export default function App() {
       ? initialScreen
       : "dashboard",
   )
+  const [role, setRole] = useState<Role>(
+    inRole("buyer", initialScreen) && !inRole("seller", initialScreen)
+      ? "buyer"
+      : "seller",
+  )
   const go = (next: Screen) => {
     setScreen(next)
+    // Shared screens (the teaser) keep whichever workspace you are in.
+    if (inRole("buyer", next) && !inRole("seller", next)) setRole("buyer")
+    else if (inRole("seller", next) && !inRole("buyer", next)) setRole("seller")
     window.history.replaceState(null, "", `#${next}`)
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
+  const switchRole = (next: Role) => {
+    setRole(next)
+    const landing = navByRole[next][0].id
+    setScreen(landing)
+    window.history.replaceState(null, "", `#${landing}`)
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
   const content: Record<Screen, ReactNode> = {
-    dashboard: <Dashboard go={go} />,
+    dashboard: <Dashboard go={go} switchRole={switchRole} />,
     create: <CreateOpportunity go={go} />,
     transfer: <Transferability go={go} />,
     teaser: <AnonymousTeaser go={go} />,
@@ -2009,7 +2451,9 @@ export default function App() {
     bid: <BidSubmission go={go} />,
     compare: <BidComparison go={go} />,
     closing: <ClosingDashboard go={go} />,
-    journey: <JourneyMap go={go} />,
+    flow: <DealFlow go={go} switchRole={switchRole} />,
+    sellerProfile: <SellerProfile go={go} />,
+    journey: <JourneyMap go={go} role={role} />,
   }
   return (
     <div className="app-shell">
@@ -2018,17 +2462,39 @@ export default function App() {
           <span>A</span>
           <strong>ATLAS</strong>
         </button>
+        <div className="role-switch">
+          <button
+            className={role === "seller" ? "active" : ""}
+            onClick={() => switchRole("seller")}
+          >
+            Seller (LP)
+          </button>
+          <button
+            className={role === "buyer" ? "active" : ""}
+            onClick={() => switchRole("buyer")}
+          >
+            Buyer
+          </button>
+        </div>
         <div className="workspace-switch">
-          <i>SV</i>
+          <i>{role === "seller" ? "SV" : "ME"}</i>
           <span>
-            <strong>Summit View</strong>
-            <small>Seller workspace</small>
+            <strong>
+              {role === "seller" ? "Summit View" : "MeridianEvergreen"}
+            </strong>
+            <small>
+              {role === "seller"
+                ? "Seller workspace · LP exiting"
+                : "Buyer workspace · secondaries fund"}
+            </small>
           </span>
           <Icon name="chevron" size={15} />
         </div>
         <nav>
-          <span>TRANSACTION WORKSPACE</span>
-          {screens.map((item) => (
+          <span>
+            {role === "seller" ? "SELLER WORKSPACE" : "BUYER WORKSPACE"}
+          </span>
+          {navByRole[role].map((item) => (
             <button
               key={item.id}
               className={screen === item.id ? "active" : ""}
@@ -2059,10 +2525,16 @@ export default function App() {
             <small>Atlas protects your identity throughout the process.</small>
           </div>
           <button className="profile">
-            <i>AS</i>
+            <i>{role === "seller" ? "AS" : "RK"}</i>
             <span>
-              <strong>Alexandra Stone</strong>
-              <small>Managing Director</small>
+              <strong>
+                {role === "seller" ? "Alexandra Stone" : "Rahul Khanna"}
+              </strong>
+              <small>
+                {role === "seller"
+                  ? "Managing Director"
+                  : "Head of Secondaries"}
+              </small>
             </span>
             <Icon name="more" size={17} />
           </button>
@@ -2076,11 +2548,7 @@ export default function App() {
           <div className="header-crumb">
             <span>Atlas Secondary</span>
             <Icon name="chevron" size={13} />
-            <strong>
-              {screen === "journey"
-                ? "Journey map"
-                : screens.find((x) => x.id === screen)?.label}
-            </strong>
+            <strong>{labelFor(role, screen)}</strong>
           </div>
           <div className="header-actions">
             <span className="secure">
