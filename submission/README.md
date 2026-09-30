@@ -14,7 +14,7 @@
 | 2 | User journeys and flows | [CONCEPT.md §6](CONCEPT.md) plus the **Journey map** screen in the prototype |
 | 3 | Visual concept — wireframes / screens / clickable prototype | The `atlas-marketplace` prototype (11 screens) |
 | 4 | AI and tools disclosure | [DISCLOSURE.md](DISCLOSURE.md) |
-| 5 | Supporting links | The public prototype URL (see below) |
+| 5 | Supporting links | **<https://samm12331231.github.io/atlas-marketplace/>** — public, no sign-in, no access request |
 
 ---
 
@@ -22,22 +22,13 @@
 
 The prototype is a running web application, not static images — every screen is clickable, and several contain live branches you can toggle.
 
-### Option A — hosted link (recommended)
+### Option A — the public link (recommended)
 
-A public URL is the safest way to meet the brief's requirement that links *open without requesting permissions*. Anything behind a personal Google Drive, Dropbox or Figma account can prompt for access and will be rejected by a reviewer.
+**<https://samm12331231.github.io/atlas-marketplace/>**
 
-To publish, build the app and drop the resulting `dist/` folder onto a free static host:
+This is already published on GitHub Pages and needs no sign-in or access request, which is what the brief requires. Anything behind a personal Google Drive, Dropbox or Figma account can prompt for a reviewer to request access, so avoid those.
 
-```bash
-npm install          # or: npm exec --yes pnpm@10 -- install
-npm run build        # produces dist/
-```
-
-Then either:
-
-- **Netlify Drop** — open <https://app.netlify.com/drop> and drag the `dist/` folder in. Gives a public URL immediately, no account required to start.
-- **GitHub Pages** — push the repository and enable Pages on the `dist/` output (or a `gh-pages` branch).
-- **Vercel / Cloudflare Pages** — import the repository; build command `npm run build`, output directory `dist`.
+Source: <https://github.com/samm12331231/atlas-marketplace> (public). Every push to `main` redeploys automatically via the workflow in [.github/workflows/deploy-pages.yml](../.github/workflows/deploy-pages.yml). See [PUBLISH.md](PUBLISH.md) for how it was set up, the Netlify Drop alternative, and the failure-symptom table.
 
 ### Option B — run it locally
 

@@ -1,5 +1,10 @@
 # Publishing the prototype to a public URL
 
+> **Status: live.** The prototype is published at
+> **<https://samm12331231.github.io/atlas-marketplace/>**
+>
+> Verified end to end: HTML, JS and CSS all return 200 from the live URL, the site renders the seller dashboard at the bare URL, deep links such as `/#journey` and `/#messages` survive a direct load, and the console is free of errors. The remaining sections document how it was done and how to change it.
+
 The brief asks for supporting links that **open without requesting permissions**. A GitHub repository page does not satisfy that on its own — the reviewer needs a link that loads the running prototype directly. That means **GitHub Pages**.
 
 This is already wired up. `.github/workflows/deploy-pages.yml` builds the app and deploys it, and `package.json` has a `build:pages` script that builds with **relative asset paths** (`--base=./`).
