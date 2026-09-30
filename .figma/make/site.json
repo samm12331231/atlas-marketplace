@@ -1,0 +1,10 @@
+{
+  "description": "Streamline private-market transactions for institutions and family offices with a secure platform for managing opportunities, bids, and compliance.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
